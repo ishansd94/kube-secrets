@@ -1,7 +1,7 @@
 # Kube-Secrets
 ### Installation
 
-Clone the repo in your $GOPATH
+Clone the repo in your $GOPATH.
 This project uses Dep (Golang vendoring tool) https://github.com/golang/dep
 
 ```sh
@@ -10,11 +10,11 @@ $ dep ensure
 $ go run cmd/secret/main.go
 ```
 
-Defualt port is ```:8000```
+Default port is ```:8000```
 
 ### Build
 
-Buidld script is available under ```hack``` folder.
+Build script is available under ```hack``` folder.
 Change ```USERNAME``` and ```IMAGE``` fields in ```hack\build.sh``` with your docker hub username and desired image name.
 
 ```sh
@@ -22,7 +22,7 @@ $ sh hack/build.sh
 ```
 
 ### Usage
-In order kube-secrets to work the ```ServiceAccount``` within the pod where it's running should have the necessary rbac permissions.
+In order for kube-secrets to work the ```ServiceAccount``` within the pod where it's running should have the necessary rbac permissions.
 
 ```
 ---
@@ -48,7 +48,7 @@ roleRef:
   name: kube-secrets
   apiGroup: rbac.authorization.k8s.io
 ```
-*NOTE: For local clusters this is not needed* 
+*NOTE: For local clusters this is not needed.* 
 
 ##### Deploy to Kubernetes
 
