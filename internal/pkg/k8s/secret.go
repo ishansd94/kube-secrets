@@ -66,7 +66,7 @@ func GetSecret(name, ns string) (*corev1.Secret, error){
 
 	err = client.Get(context.Background(), ns, name, &secret)
 	if err != nil {
-		log.Error("k8s.CreateSecret", "error listing secrets", err)
+		log.Error("k8s.CreateSecret", "error listing secret", err)
 		return nil, err
 	}
 

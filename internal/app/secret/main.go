@@ -65,7 +65,12 @@ func Get(c *gin.Context){
 	ns := c.DefaultQuery("namespace", "")
 	name := c.DefaultQuery("name", "")
 
-	if name == "" {
+	if empty(ns) {
+		response.Default(c, http.StatusBadRequest)
+		return
+	}
+
+	if empty(name) {
 		secrets, err := k8s.AllSecrets(ns)
 		if err != nil {
 			response.Custom(c, http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -109,4 +114,8 @@ func handleK8sError(c *gin.Context,err error) bool {
 	}
 
 	return false
+}
+
+func empty(str string) bool {
+	return str == ""
 }
