@@ -1,4 +1,4 @@
-# Kube-Secrets
+# Kube-Secrets [![Build Status](https://travis-ci.org/ishansd94/kube-secrets.svg?branch=master)](https://travis-ci.org/ishansd94/kube-secrets)
 ### Installation
 
 Clone the repo in your $GOPATH.
