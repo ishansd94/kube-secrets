@@ -1,15 +1,20 @@
 language: go
 
 go:
-- 1.11.x
+  - 1.11.x
 
 sudo: false
 
 services:
-- docker
+  - docker
 
-before_script:
-- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+before_install:
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+  - dep status
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+
+install:
+  - sh hack/build.sh
 
 script:
-- sh hack/build.sh
+  - echo "tests..."
