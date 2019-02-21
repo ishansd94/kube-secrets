@@ -34,3 +34,41 @@ func CreateSecret(name , ns string, content map[string]string) error {
 
 	return nil
 }
+
+
+func AllSecrets(ns string) (*corev1.SecretList, error) {
+	client, err := k8s.NewInClusterClient()
+	if err != nil {
+		log.Error("k8s.CreateSecret", "error creating k8 client", err)
+		return nil, err
+	}
+
+	var secrets corev1.SecretList
+
+	err = client.List(context.Background(), ns, &secrets)
+	if err != nil {
+		log.Error("k8s.CreateSecret", "error listing secrets", err)
+		return nil, err
+	}
+
+	return &secrets, nil
+}
+
+
+func GetSecret(name, ns string) (*corev1.Secret, error){
+	client, err := k8s.NewInClusterClient()
+	if err != nil {
+		log.Error("k8s.CreateSecret", "error creating k8 client", err)
+		return nil, err
+	}
+
+	var secret corev1.Secret
+
+	err = client.Get(context.Background(), ns, name, &secret)
+	if err != nil {
+		log.Error("k8s.CreateSecret", "error listing secrets", err)
+		return nil, err
+	}
+
+	return &secret, nil
+}

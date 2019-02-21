@@ -22,6 +22,10 @@ var (
 		"status":  http.StatusCreated,
 		"message": "created",
 	}
+
+	OKMsg = gin.H{
+		"status":  http.StatusOK,
+	}
 )
 
 func Default(c *gin.Context, statusCode int) {
@@ -52,7 +56,10 @@ func Custom(c *gin.Context, statusCode int, m gin.H) {
 
 	case http.StatusCreated:
 		_ = mergo.Merge(&m, CreateMsg)
-		c.JSON(http.StatusCreated, CreateMsg)
+		c.JSON(http.StatusCreated, m)
 
+	case http.StatusOK:
+		_ = mergo.Merge(&m, OKMsg)
+		c.JSON(http.StatusOK, m)
 	}
 }

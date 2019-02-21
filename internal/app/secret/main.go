@@ -53,6 +53,33 @@ func Create(c *gin.Context) {
 	response.Default(c, http.StatusCreated)
 }
 
+
+func Get(c *gin.Context){
+
+	ns := c.DefaultQuery("namespace", "")
+	name := c.DefaultQuery("name", "")
+
+	if name == "" {
+		secrets, err := k8s.AllSecrets(ns)
+		if err != nil {
+			response.Custom(c, http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		response.Custom(c, http.StatusOK, gin.H{"items": secrets.GetItems()})
+		return
+	}
+
+	secret, err := k8s.GetSecret(name, ns)
+	if err != nil {
+		response.Custom(c, http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	response.Custom(c, http.StatusOK, gin.H{"item": secret})
+}
+
 func uuid() string {
 	return gouuid.NewV4().String()
 }
+

@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	"github.com/ishansd94/kube-secrets/internal/app/secret"
+	"github.com/ishansd94/kube-secrets/pkg/env"
 )
 
 func main() {
@@ -13,9 +16,12 @@ func main() {
 
 	r.Use(cors.Default())
 
+	r.GET("", secret.Get)
 	r.POST("", secret.Create)
 
-	if err := r.Run(":8000"); err != nil{
+	port := env.Get("PORT", "8000")
+
+	if err := r.Run(fmt.Sprintf(":%s", port)); err != nil {
 		panic(err)
 	}
 }
