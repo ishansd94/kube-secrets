@@ -23,6 +23,11 @@ var (
 		"message": "created",
 	}
 
+	ConflictMsg = gin.H{
+		"status":  http.StatusConflict,
+		"message": "a resource with same name exists",
+	}
+
 	OKMsg = gin.H{
 		"status":  http.StatusOK,
 	}
@@ -60,6 +65,10 @@ func Custom(c *gin.Context, statusCode int, m gin.H) {
 
 	case http.StatusOK:
 		_ = mergo.Merge(&m, OKMsg)
+		c.JSON(http.StatusOK, m)
+
+	case http.StatusConflict:
+		_ = mergo.Merge(&m, ConflictMsg)
 		c.JSON(http.StatusOK, m)
 	}
 }

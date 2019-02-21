@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-ozzo/ozzo-validation"
 	gouuid "github.com/satori/go.uuid"
+	k8slib "github.com/ericchiang/k8s"
 
 	"github.com/ishansd94/kube-secrets/internal/pkg/k8s"
 	"github.com/ishansd94/kube-secrets/internal/pkg/response"
@@ -46,6 +47,11 @@ func Create(c *gin.Context) {
 	}
 
 	if err := k8s.CreateSecret(req.Name, req.Namespace, req.Content); err != nil{
+
+		if handleK8sError(c, err) {
+			return
+		}
+
 		response.Custom(c, http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -72,6 +78,11 @@ func Get(c *gin.Context){
 
 	secret, err := k8s.GetSecret(name, ns)
 	if err != nil {
+
+		if handleK8sError(c, err) {
+			return
+		}
+
 		response.Custom(c, http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -83,3 +94,19 @@ func uuid() string {
 	return gouuid.NewV4().String()
 }
 
+func handleK8sError(c *gin.Context,err error) bool {
+
+	if apierr, ok := err.(*k8slib.APIError); ok {
+		if apierr.Code == http.StatusNotFound {
+			response.Custom(c, http.StatusNotFound, gin.H{"error": err.Error()})
+			return true
+		}
+
+		if apierr.Code == http.StatusConflict {
+			response.Custom(c, http.StatusConflict, gin.H{"error": err.Error()})
+			return true
+		}
+	}
+
+	return false
+}

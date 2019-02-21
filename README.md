@@ -73,8 +73,10 @@ $ kubectl get pods -n app -o wide
 log into nginx or any other pod and use the pod ip of kube-secrets to call the web service.
 
 ##### Payloads
-
+---
+##### 1. Creating Secrets  
 Expected payload as a ```POST``` request.
+
 ```
 {
     "name": <name of the secret, string>,
@@ -104,6 +106,18 @@ metadata:
   uid: ee596159-30ec-11e9-a4a2-00155d8a3211
 type: Opaque
 ```
+##### 2. Listing Secrets
+- ***Listing a particulr secret***
+```
+$ curl '<kube-secrets pod ip>:8000/?namespace=<ns>&name=<name>'
+```
 
-### Todo
-- [ ] Jinja templating for Dockerfile to fill in placeholders and create a app specific Dockerfile.
+- ***Listing secrets in a particular namespace***
+```
+$ curl '<kube-secrets pod ip>:8000/?namespace=<ns>'
+```
+
+- ***Listing all secrets***
+```
+$ curl '<kube-secrets pod ip>:8000'
+```
