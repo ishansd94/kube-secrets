@@ -1,0 +1,15 @@
+language: go
+
+services:
+  - docker
+
+before_install:
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+
+script:
+  - sh hack/build.sh
+
+branches:
+  only:
+    - dev
+    - master
