@@ -1,15 +1,15 @@
 language: go
 
-services:
-  - docker
+go:
+- 1.11.x
 
-before_install:
-  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+sudo: false
+
+services:
+- docker
+
+before_script:
+- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 
 script:
-  - sh hack/build.sh
-
-branches:
-  only:
-    - dev
-    - master
+- sh hack/build.sh
