@@ -3,10 +3,10 @@ package secret
 import (
 	"net/http"
 
+	k8slib "github.com/ericchiang/k8s"
 	"github.com/gin-gonic/gin"
 	"github.com/go-ozzo/ozzo-validation"
 	gouuid "github.com/satori/go.uuid"
-	k8slib "github.com/ericchiang/k8s"
 
 	"github.com/ishansd94/kube-secrets/internal/pkg/k8s"
 	"github.com/ishansd94/kube-secrets/internal/pkg/response"
@@ -31,7 +31,7 @@ func Create(c *gin.Context) {
 	var req SecretRequest
 	if err := c.BindJSON(&req); err != nil {
 		log.Error("secret.Create", "error while binding request", err)
-		response.Default(c, http.StatusInternalServerError)
+		response.Default(c, http.StatusBadRequest)
 		return
 	}
 
