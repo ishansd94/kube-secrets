@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 set -ex
 
-USERNAME=emzian7
-IMAGE=kube-secrets
-
-DOCKER_BUILDKIT=1 docker build -t ${USERNAME}/${IMAGE} --build-arg APP="github.com/ishansd94/kube-secrets" --build-arg EXECUTABLE="secret" .
-
-docker push ${USERNAME}/${IMAGE}
+DOCKER_BUILDKIT=1 docker build -t ${USERNAME}/${IMAGE} \
+ --build-arg APP=${APP} --build-arg EXECUTABLE=${EXECUTABLE} --build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa)" .
