@@ -15,7 +15,7 @@ Default port is ```:8000```
 ### Build
 
 Build script is available under ```hack``` folder.
-Change ```USERNAME``` and ```IMAGE``` fields in ```hack\build.sh``` with your docker hub username and desired image name.
+Change ```USERNAME``` and ```IMAGE``` fields in ```hack\run.sh``` with your docker hub username and desired image name.
 
 ```sh
 $ sh hack/build.sh
