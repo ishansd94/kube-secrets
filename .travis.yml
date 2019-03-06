@@ -1,7 +1,4 @@
-language: go
-
-go:
-  - 1.11.x
+language: generic
 
 sudo: false
 
@@ -12,7 +9,7 @@ before_install:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 
 install:
-  - sh hack/build.sh
+  - task build
 
 script:
-  - echo "tests..."
+  - task

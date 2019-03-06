@@ -11,12 +11,7 @@ import (
 )
 
 
-func CreateSecret(name , ns string, content map[string]string) error {
-	client, err := k8s.NewInClusterClient()
-	if err != nil {
-		log.Error("k8s.CreateSecret", "error creating k8 client", err)
-		return  err
-	}
+func (h *Handler) CreateSecret(name , ns string, content map[string]string) error {
 
 	secret := &corev1.Secret{
 		Metadata: &metav1.ObjectMeta{
@@ -26,7 +21,7 @@ func CreateSecret(name , ns string, content map[string]string) error {
 		StringData: content,
 	}
 
-	err = client.Create(context.Background(), secret)
+	err := h.Client.Create(context.Background(), secret)
 	if err != nil {
 		log.Error("k8s.CreateSecret", "error creating secret", err)
 		return err
@@ -36,16 +31,11 @@ func CreateSecret(name , ns string, content map[string]string) error {
 }
 
 
-func AllSecrets(ns string) (*corev1.SecretList, error) {
-	client, err := k8s.NewInClusterClient()
-	if err != nil {
-		log.Error("k8s.CreateSecret", "error creating k8 client", err)
-		return nil, err
-	}
+func (h *Handler) AllSecrets(ns string) (*corev1.SecretList, error) {
 
 	var secrets corev1.SecretList
 
-	err = client.List(context.Background(), ns, &secrets)
+	err := h.Client.List(context.Background(), ns, &secrets)
 	if err != nil {
 		log.Error("k8s.CreateSecret", "error listing secrets", err)
 		return nil, err
@@ -55,16 +45,11 @@ func AllSecrets(ns string) (*corev1.SecretList, error) {
 }
 
 
-func GetSecret(name, ns string) (*corev1.Secret, error){
-	client, err := k8s.NewInClusterClient()
-	if err != nil {
-		log.Error("k8s.CreateSecret", "error creating k8 client", err)
-		return nil, err
-	}
+func (h *Handler) GetSecret(name, ns string) (*corev1.Secret, error){
 
 	var secret corev1.Secret
 
-	err = client.Get(context.Background(), ns, name, &secret)
+	err := h.Client.Get(context.Background(), ns, name, &secret)
 	if err != nil {
 		log.Error("k8s.CreateSecret", "error listing secret", err)
 		return nil, err

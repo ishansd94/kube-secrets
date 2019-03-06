@@ -73,6 +73,25 @@
   version = "v0.3.7"
 
 [[projects]]
+  digest = "1:868bcbe191952d26c4f711bb7bb19a1782154ae6af8b4cc56bc93299361a6985"
+  name = "github.com/ishansd94/stdemuxerhook"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ea7815db7c89464792920d536232259f385ad28c"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:1f4b55d7c57681ad91b7ce3ac7c8e7b139e6dd2f477c5f87e6a7749d298645dc"
+  name = "github.com/joho/godotenv"
+  packages = [
+    ".",
+    "autoload",
+  ]
+  pruneopts = "UT"
+  revision = "23d116af351c84513e1946b527c88823e476be13"
+  version = "v1.3.0"
+
+[[projects]]
   digest = "1:3e551bbb3a7c0ab2a2bf4660e7fcad16db089fdcfbb44b0199e62838038623ea"
   name = "github.com/json-iterator/go"
   packages = ["."]
@@ -218,6 +237,8 @@
     "github.com/gin-gonic/gin",
     "github.com/go-ozzo/ozzo-validation",
     "github.com/imdario/mergo",
+    "github.com/ishansd94/stdemuxerhook",
+    "github.com/joho/godotenv/autoload",
     "github.com/satori/go.uuid",
     "github.com/sirupsen/logrus",
   ]

@@ -46,7 +46,16 @@ func Create(c *gin.Context) {
 		}
 	}
 
-	if err := k8s.CreateSecret(req.Name, req.Namespace, req.Content); err != nil{
+	client, err := k8sclient()
+	if err != nil {
+		response.Custom(c, http.StatusInternalServerError, gin.H{"errors": err})
+		log.Error("secret.Create", "error while creating k8s client", err)
+		return
+	}
+
+	h := k8s.NewHandler(client)
+
+	if err := h.CreateSecret(req.Name, req.Namespace, req.Content); err != nil{
 
 		if handleK8sError(c, err) {
 			return
@@ -70,8 +79,17 @@ func Get(c *gin.Context){
 		return
 	}
 
+	client, err := k8sclient()
+	if err != nil {
+		response.Custom(c, http.StatusInternalServerError, gin.H{"errors": err})
+		log.Error("secret.Create", "error while creating k8s client", err)
+		return
+	}
+
+	h := k8s.NewHandler(client)
+
 	if empty(name) {
-		secrets, err := k8s.AllSecrets(ns)
+		secrets, err := h.AllSecrets(ns)
 		if err != nil {
 			response.Custom(c, http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -81,7 +99,7 @@ func Get(c *gin.Context){
 		return
 	}
 
-	secret, err := k8s.GetSecret(name, ns)
+	secret, err := h.GetSecret(name, ns)
 	if err != nil {
 
 		if handleK8sError(c, err) {
@@ -114,6 +132,16 @@ func handleK8sError(c *gin.Context,err error) bool {
 	}
 
 	return false
+}
+
+func k8sclient() (*k8slib.Client, error) {
+	client, err := k8slib.NewInClusterClient()
+	if err != nil {
+		log.Error("secret.k8sclient", "error creating k8 client", err)
+		return nil, err
+	}
+
+	return client, nil
 }
 
 func empty(str string) bool {

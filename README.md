@@ -1,4 +1,14 @@
-# Kube-Secrets [![Build Status](https://travis-ci.org/ishansd94/kube-secrets.svg?branch=master)](https://travis-ci.org/ishansd94/kube-secrets)
+# Kube-Secrets
+Web service to create kubernetes secrets.
+
+### Pre-requisites
+
+```
+1. https://github.com/go-task/task (Makefile alternative.)
+2. GO
+3. https://github.com/golang/dep (Go dependency manager)
+```
+
 ### Installation
 
 Clone the repo in your $GOPATH.
@@ -6,23 +16,26 @@ This project uses Dep (Golang vendoring tool) https://github.com/golang/dep
 
 ```sh
 $ cd $GOPATH/src/github.com/ishansd94/kube-secrets
-$ dep ensure
-$ go run cmd/secret/main.go
+$ task install
+$ task run
 ```
-
-Default port is ```:8000```
+*NOTE: Default port is ```:8000```. Port can be changed by setting ```PORT``` environment variable*
 
 ### Build
 
-Build script is available under ```hack``` folder.
-Change ```USERNAME``` and ```IMAGE``` fields in ```hack\run.sh``` with your docker hub username and desired image name.
+Build parameters are available in the ```Taskfile.yml```
+Change ```USERNAME``` and ```IMAGE``` parameters with your docker hub username and desired image name.
 
 ```sh
-$ sh hack/build.sh
+$ task build
+```
+If you use seperate key for gitlab, change the location of the private key file.
+```
+SSH_PRIVATE_KEY: $(cat ~/.ssh/id_rsa)
 ```
 
 ### Usage
-In order for kube-secrets to work the ```ServiceAccount``` within the pod where it's running should have the necessary rbac permissions.
+In order for kube-quotas to work the ```ServiceAccount``` within the pod where it's running should have the necessary RBAC permissions.
 
 ```
 ---
@@ -52,29 +65,24 @@ roleRef:
 
 ##### Deploy to Kubernetes
 
-create a seperate ns for kube-secrets ex: app
+Create a seperate ```namespace``` for kube-quotas ex: ```app``` and create a ```deployment```.
 
 ```
 $ kubectl create ns app
 $ kubectl create deployment kube-secrets --image=emzian7/kube-secrets -n app
-$ kubectl get all -n app
 ```
 
 ##### Using kube-secrets web service
 
-create a nginx or other pod inside the same ns as kube-secrets
-```
-$ kubectl create deployment nginx --image=nginx -n app
-```
-Get pod ips
+Get the pod ip using,
 ```
 $ kubectl get pods -n app -o wide
 ```
-log into nginx or any other pod and use the pod ip of kube-secrets to call the web service.
 
 ##### Payloads
 ---
 ##### 1. Creating Secrets  
+
 Expected payload as a ```POST``` request.
 
 ```
@@ -87,7 +95,6 @@ Expected payload as a ```POST``` request.
 *NOTE: content is mapped to map[string]string, json obj expected is something like {"foo": "bar"}. If content field is not specified default uuid will be created*. 
 
 ```
-$ kubectl exec -it -n <any other ns> <any other pod> -- bash
 $ curl -d '{"name":"foo", "namespace":"app"}' -H "Content-Type: application/json" -X POST <kube-secrets pod ip>:8000
 ```
 
@@ -107,17 +114,22 @@ metadata:
 type: Opaque
 ```
 ##### 2. Listing Secrets
-- ***Listing a particulr secret***
+- **Listing a particular secret**
 ```
 $ curl '<kube-secrets pod ip>:8000/?namespace=<ns>&name=<name>'
 ```
 
-- ***Listing secrets in a particular namespace***
+- **Listing secrets in a particular namespace**
 ```
 $ curl '<kube-secrets pod ip>:8000/?namespace=<ns>'
 ```
-
-- ***Listing all secrets***
+- **Listing all secrets**
 ```
 $ curl '<kube-secrets pod ip>:8000'
+```
+
+### Testing
+
+```
+$ task test
 ```

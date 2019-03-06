@@ -1,0 +1,57 @@
+# https://taskfile.org
+
+version: '2'
+
+vars:
+  USERNAME: emzian7
+  IMAGE: kube-secrets
+  APP: "github.com/ishansd94/kube-secrets"
+  EXECUTABLE: "secret"
+  SSH_PRIVATE_KEY: $(cat ~/.ssh/id_rsa)
+
+  RELEASE: v0.0.1
+  COMMIT: $(git rev-parse --short HEAD)
+  BUILDTIME: $(date -u '+%Y-%m-%d_%H:%M:%S')
+
+tasks:
+  install:
+    cmds:
+      - dep ensure -v
+
+  run:
+    cmds:
+      - go run cmd/secret/main.go
+
+  build:
+    cmds:
+      - |
+        DOCKER_BUILDKIT=0 docker build \
+        -f build/Dockerfile \
+        -t {{.USERNAME}}/{{.IMAGE}}:{{.RELEASE}} \
+        --build-arg APP={{.APP}} \
+        --build-arg EXECUTABLE={{.EXECUTABLE}} \
+        --build-arg SSH_PRIVATE_KEY="{{.SSH_PRIVATE_KEY}}" \
+        --build-arg RELEASE={{.RELEASE}} \
+        --build-arg COMMIT={{.COMMIT}} \
+        --build-arg BUILDTIME={{.BUILDTIME}} \
+        .
+      - docker tag {{.USERNAME}}/{{.IMAGE}}:{{.RELEASE}} {{.USERNAME}}/{{.IMAGE}}:latest
+
+  test:
+    cmds:
+      - |
+        DOCKER_BUILDKIT=0 docker build -t {{.USERNAME}}/{{.IMAGE}}:{{.RELEASE}}-test -f build/Dockerfile.test \
+        --build-arg APP={{.APP}} \
+        .
+      - |
+        if kubectl get ns | grep -q {{.EXECUTABLE}}-test;then
+          kubectl delete ns {{.EXECUTABLE}}-test
+        fi
+      - kubectl create ns {{.EXECUTABLE}}-test
+      - kubectl run -it {{.IMAGE}}-test --image={{.USERNAME}}/{{.IMAGE}}:{{.RELEASE}}-test -n {{.EXECUTABLE}}-test -- go test -v -cover -race ./internal/pkg/k8s ./cmd/secret
+      - kubectl delete ns {{.EXECUTABLE}}-test
+
+  push:
+    cmds:
+      - docker push {{.USERNAME}}/{{.IMAGE}}:{{.RELEASE}}
+      - docker push {{.USERNAME}}/{{.IMAGE}}
