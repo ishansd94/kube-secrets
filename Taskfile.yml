@@ -20,7 +20,7 @@ tasks:
 
   run:
     cmds:
-      - go run cmd/secret/main.go
+      - go run cmd/{{.EXECUTABLE}}/main.go
 
   build:
     cmds:
@@ -48,7 +48,7 @@ tasks:
           kubectl delete ns {{.EXECUTABLE}}-test
         fi
       - kubectl create ns {{.EXECUTABLE}}-test
-      - kubectl run -it {{.IMAGE}}-test --image={{.USERNAME}}/{{.IMAGE}}:{{.RELEASE}}-test -n {{.EXECUTABLE}}-test -- go test -v -cover -race ./internal/pkg/k8s ./cmd/secret
+      - kubectl run -it {{.IMAGE}}-test --image={{.USERNAME}}/{{.IMAGE}}:{{.RELEASE}}-test -n {{.EXECUTABLE}}-test -- go test -v -cover -race ./internal/pkg/k8s ./cmd/{{.EXECUTABLE}}
       - kubectl delete ns {{.EXECUTABLE}}-test
 
   push:

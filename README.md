@@ -29,7 +29,7 @@ Change ```USERNAME``` and ```IMAGE``` parameters with your docker hub username a
 ```sh
 $ task build
 ```
-If you use seperate key for gitlab, change the location of the private key file.
+If you use separate key for gitlab, change the location of the private key file.
 ```
 SSH_PRIVATE_KEY: $(cat ~/.ssh/id_rsa)
 ```
